@@ -1,5 +1,5 @@
 (ns cont-examples.async
-  (:require [clojure.core.async :refer (chan <! >! <!! go)]
+  (:require [clojure.core.async :refer (chan <! >! <!! go put! take! close!)]
             [ring.util.response :refer (response)]
             [cont-examples.common :refer (prompt show)]))
 
@@ -10,9 +10,9 @@ Returns [call resume] for initial call and subsequent resumes."
   (let [out (chan)
         in (chan)
         yield (fn [question] (go (>! out (prompt question)) (<! in)))
-        return (fn [value] (go (>! out (show value))))
+        return (fn [value] (go (>! out (show value)) (close! in)))
         call (fn [] out)
-        resume (fn [value] (go (>! in value) (show (<! out))))]
+        resume (fn [value] (go (>! in value) (<! out)))]
     (f yield return)
     [call resume]))
 
@@ -25,8 +25,8 @@ Returns [call resume] for initial call and subsequent resumes."
 (defn handler
   "Handle request - if there's a resume function in the session, call
 with answer. Otherwise start a new conversation."
-  [{session :session {answer :answer} :params}]
-  (if-let [resume (:resume session)]
+  [{{resume :resume :as session} :session {answer "answer"} :params}]
+  (if (and resume answer)
     (<!! (resume answer))
     (let [[call resume] (make-coroutine converse)]
       (-> (<!! (call))
