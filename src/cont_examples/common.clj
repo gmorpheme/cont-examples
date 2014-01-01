@@ -1,4 +1,5 @@
-(ns cont-examples.common
+(ns ^{:doc "Common HTML helpers for each implementation"}
+  cont-examples.common
   (:require [ring.util.response :refer (response)]))
 
 (defn prompt

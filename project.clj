@@ -7,7 +7,7 @@
   :plugins [[lein-ring "0.8.3"]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/algo.monads "0.1.4"]
-                 [org.clojure/core.async "0.1.0-SNAPSHOT"]
-                 [ring/ring-core "1.1.8"]
-                 [ring/ring-jetty-adapter "1.1.8"]]
+                 [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
+                 [ring/ring-core "1.2.1"]
+                 [ring/ring-jetty-adapter "1.2.1"]]
   :ring {:handler cont-examples.core/app})
